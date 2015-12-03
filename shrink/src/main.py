@@ -26,7 +26,7 @@ def main(args):
     att_dict = {U_UNIVERSITY_CODE:'www.bits-pilani.ac.in', \
             PROGRAM_CODE: 'ms', \
             UNIVERSITY: 'North Carolina State University'}
-    est = exp.correct_get_estimated_result(undergrad_to_grad_uni,
+    est = exp.get_estimated_result(undergrad_to_grad_uni,
             pgm_code_to_ugrad_uni, att_dict)
     
     #ACTUAL RESULT
@@ -42,7 +42,7 @@ def main(args):
             PROGRAM_CODE: 'ms', \
             UNIVERSITY: 'Stanford'}
 
-    est = exp.correct_get_estimated_result(ug_to_g, pgm_to_ug, att_dict)
+    est = exp.get_estimated_result(ug_to_g, pgm_to_ug, att_dict)
     print(est)
     return None
     """

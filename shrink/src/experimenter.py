@@ -23,11 +23,7 @@ class Experimenter:
         return None
 
     
-    def get_accurate_result(self):
-        return None
-
-
-    def correct_get_estimated_result(self, undergrad_grad, pgm_ugrad, att_dict):
+    def get_estimated_result(self, undergrad_grad, pgm_ugrad, att_dict):
         undergrad = att_dict[U_UNIVERSITY_CODE]
         grad = att_dict[UNIVERSITY]
         pgm = att_dict[PROGRAM_CODE]
@@ -51,38 +47,8 @@ class Experimenter:
             frac_2 = float(out_pgm_ugrad) / out_pgm_total
             return frac_1 * frac_2
 
-    def get_estimated_result(self, undergrad_grad, pgm_grad, att_dict):
-        undergrad = att_dict[U_UNIVERSITY_CODE]
-        grad = att_dict[UNIVERSITY]
-        pgm = att_dict[PROGRAM_CODE]
-        if undergrad_grad.has_edge(undergrad,grad) is False or \
-                pgm_grad.has_edge(pgm,grad) is False:
-                    return 0
-        else:
-            u_g_edges = undergrad_grad.edges()
-            out_undergrad_total = \
-                    sum([undergrad_grad[u][v]['weight'] \
-                    for u,v in u_g_edges if u==undergrad or v==undergrad])
-            out_undergrad_grad = undergrad_grad[undergrad][grad]['weight']
-            frac_1 = float(out_undergrad_grad) / out_undergrad_total
-
-            p_g_edges = pgm_grad.edges()
-            out_pgm_total = \
-                    sum([pgm_grad[u][v]['weight'] \
-                    for u,v in p_g_edges if u==pgm or v==pgm])
-            out_pgm_grad = pgm_grad[pgm][grad]['weight']
-            frac_2 = float(out_pgm_grad) / out_pgm_total
-            return frac_1 * frac_2
-    
+   
     def get_actual_result(self, given_dict, infer_dict):
-        """
-        dm = DataModel(self.dm)
-        for key in given_dict:
-            print key
-            dm.set_data(dm.filter_data(filter_type=LIST,
-                    feature=key,
-                    shortlist=[given_dict[key]]))
-        """
         given_count = 0
         inferred_count = 0
         for row in self.dm.data:
@@ -154,6 +120,9 @@ class Experimenter:
 #        plt.show()
         return G
 
+#============================================================
+#============================================================
+
     def dummy_graphs(self):
         #Graph of Undergrad to Grad
         g1 = nx.Graph()
@@ -195,3 +164,6 @@ class Experimenter:
         g3.add_edge('phd', 'UIUC', weight=4)
 
         return g1, g2, g3
+
+#============================================================
+#============================================================
