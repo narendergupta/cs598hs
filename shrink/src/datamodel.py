@@ -15,8 +15,7 @@ class DataModel:
             self.data = []
         elif isinstance(data, DataModel) is True:
             self.data = deepcopy(data.data)
-            self.uni_data_map = deepcopy(data.get_uni_data_map())
-
+#            self.uni_data_map = deepcopy(data.get_uni_data_map())
 
     def read_data(self, to_read_count=-1, normalize_data=True):
         self.data = []

@@ -1,7 +1,7 @@
-from shrink.config.strings import *
 from datamodel import DataModel
 from experimenter import Experimenter
 
+from shrink.config.strings import *
 import argparse
 import time
 
@@ -14,18 +14,38 @@ def main(args):
     attributes_all = [U_GRADE_NORM, GRE_QUANT_NORM, GRE_VERBAL_NORM, GRE_AWA_NORM,\
             TOEFL_NORM, PROGRAM_CODE, U_MAJOR_CODE, TERM, YEAR, U_UNIVERSITY_RANK]
     exp = Experimenter(dm)
+    
     undergrad_to_grad_uni = exp.get_grad_uni_summary_graph(U_UNIVERSITY_CODE)
-    pgm_code_to_grad_uni = exp.get_grad_uni_summary_graph(PROGRAM_CODE)
-    print(len(undergrad_to_grad_uni.edges()), len(pgm_code_to_grad_uni.edges()))
+    pgm_code_to_ugrad_uni = exp.get_summary_graph(U_UNIVERSITY_CODE, PROGRAM_CODE)
+    print(len(undergrad_to_grad_uni.edges()), len(pgm_code_to_ugrad_uni.edges()))
+    
+#    ug_to_g, pgm_to_ug, pgm_to_g = exp.dummy_graphs()
+#    print(len(ug_to_g.edges()), len(pgm_to_ug.edges()))
 
-    att_dict = {U_UNIVERSITY_CODE:'www.unom.ac.in',\
-            PROGRAM_CODE:'ms',\
-            UNIVERSITY:'Arizona State University'}
-    est = exp.get_estimated_result(undergrad_to_grad_uni,
-            pgm_code_to_grad_uni, att_dict)
-    print(est)
+    #NAIVE BAYES ESTIMATION 
+    att_dict = {U_UNIVERSITY_CODE:'www.bits-pilani.ac.in', \
+            PROGRAM_CODE: 'ms', \
+            UNIVERSITY: 'North Carolina State University'}
+    est = exp.correct_get_estimated_result(undergrad_to_grad_uni,
+            pgm_code_to_ugrad_uni, att_dict)
+    
+    #ACTUAL RESULT
+    given_dict = {U_UNIVERSITY_CODE: 'www.bits-pilani.ac.in'}
+    inf_dict = {PROGRAM_CODE: 'ms', UNIVERSITY: 'North Carolina State University'}
+    acc = exp.get_actual_result(given_dict, inf_dict)
+    
+    print(est, acc)
     return None
 
+    """
+    att_dict = {U_UNIVERSITY_CODE: 'www.13.com', \
+            PROGRAM_CODE: 'ms', \
+            UNIVERSITY: 'Stanford'}
+
+    est = exp.correct_get_estimated_result(ug_to_g, pgm_to_ug, att_dict)
+    print(est)
+    return None
+    """
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
