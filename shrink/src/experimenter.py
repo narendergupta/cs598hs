@@ -20,7 +20,7 @@ class Experimenter:
     def set_datamodel(self, dm):
         self.dm = dm
         return None
-
+#==========================================================================================================================#
     #========PREPROCESSING========#
     def get_all_summary_graphs(self, attr_list):
         summary_graph_dict = {}
@@ -36,6 +36,41 @@ class Experimenter:
                     summary_graph_dict[(attr_list[i], attr_list[j])] = self.get_summary_graph(attr_list[i], attr_list[j])
         return summary_graph_dict
     #========PREPROCESSING========#
+
+    #========GET THE PROBABILITIES ========#
+    def get_numerator(self, summary_graph_dict, given_dict, infer_dict):
+        numerator = 1
+        for key1 in infer_dict:
+            prod = 1
+            for key2 in given_dict:
+                prod = prod * self.get_conditional_probability(summary_graph_dict, key2, key1, given_dict[key2], infer_dict[key1])
+            for graph in summary_graph_dict:
+                if key1 in graph:
+                    break
+            prod = prod * self.get_prior_probability(summary_graph_dict[graph], infer_dict[key1])
+            numerator = numerator * prod
+
+        return numerator
+
+    def get_total_count(self, graph):
+        return sum([graph[u][v]['weight'] for u,v in graph.edges()])
+    
+    def get_prior_probability(self, graph, att_val):
+        total_att = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==att_val or v==att_val])
+        return float(total_att)/self.get_total_count(graph)
+
+    def get_conditional_probability(self, summary_graph_dict, infer_type, given_type, infer_val, given_val):
+        """
+        get probability of infer/given
+        """
+        if (infer_type, given_type) in summary_graph_dict: graph = summary_graph_dict[(infer_type, given_type)]
+        elif (given_type, infer_type) in summary_graph_dict: graph = summary_graph_dict[(given_type, infer_type)]
+        else: return 0
+        total = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==given_val or v==given_val])
+        infer = graph[infer_val][given_val]['weight']
+        return float(infer)/total
+    #========GET THE PROBABILITIES ========#
+#==========================================================================================================================#
 
     """
     NEED TO COME FROM GRAPH AND NOT FROM THE ENTIRE DATA
