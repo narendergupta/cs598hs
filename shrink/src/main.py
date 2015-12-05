@@ -7,7 +7,7 @@ import time
 
 def main(args):
     dm = DataModel(args.data_file)
-    dm.read_data(to_read_count=2, normalize_data=False)
+    dm.read_data(normalize_data=False)
     dm.set_data(
             dm.filter_data(
                 filter_type=LIST, feature=U_MAJOR_CODE, shortlist=['ee','cs']))
@@ -25,34 +25,38 @@ def main(args):
 #    pgm_code_to_ugrad_uni = exp.get_summary_graph(U_UNIVERSITY_CODE, PROGRAM_CODE)
 #    print(len(undergrad_to_grad_uni.edges()), len(pgm_code_to_ugrad_uni.edges()))
     
-    ug_to_g, pgm_to_ug, pgm_to_g = exp.dummy_graphs()
+#    ug_to_g, pgm_to_ug, pgm_to_g = exp.dummy_graphs()
 #    print(len(ug_to_g.edges()), len(pgm_to_ug.edges()))
 
     #NAIVE BAYES ESTIMATION 
-    att_dict = {U_UNIVERSITY_CODE:'www.bits-pilani.ac.in', \
-            PROGRAM_CODE: 'ms', \
-            UNIVERSITY: 'North Carolina State University'}
+#    att_dict = {U_UNIVERSITY_CODE:'www.bits-pilani.ac.in', \
+#            PROGRAM_CODE: 'ms', \
+#            UNIVERSITY: 'North Carolina State University'}
 #    est = exp.get_estimated_result(undergrad_to_grad_uni,
 #            pgm_code_to_ugrad_uni, att_dict)
     
     #ACTUAL RESULT
-#    given_dict = {U_UNIVERSITY_CODE: 'www.bits-pilani.ac.in'}
-#    inf_dict = {PROGRAM_CODE: 'ms', UNIVERSITY: 'North Carolina State University'}
-#    acc = exp.get_actual_result(given_dict, inf_dict)
-    
-#    print(est, acc)
-    #========TEST CONDITIONAL PROBABILITY========#
-    summary_graph_dict = {(U_UNIVERSITY_CODE, UNIVERSITY):ug_to_g, (PROGRAM_CODE, U_UNIVERSITY_CODE):pgm_to_ug, (PROGRAM_CODE, UNIVERSITY):pgm_to_g}
-    given_dict = {U_UNIVERSITY_CODE: 'www.13.com'}
-    inf_dict = {PROGRAM_CODE: 'ms', UNIVERSITY: 'Stanford'}
+    given_dict = {U_UNIVERSITY_CODE: 'www.bits-pilani.ac.in'}
+    inf_dict = {PROGRAM_CODE: 'ms', UNIVERSITY: 'North Carolina State University'}
+    acc = exp.get_actual_result(given_dict, inf_dict)
+    est = exp.generic_get_estimated_result(summary_graphs, given_dict, inf_dict)    
+    print(est, acc)
+    return None
+#========TEST CONDITIONAL PROBABILITY========#
+#    summary_graph_dict = {(U_UNIVERSITY_CODE, UNIVERSITY):ug_to_g, (PROGRAM_CODE, U_UNIVERSITY_CODE):pgm_to_ug, (PROGRAM_CODE, UNIVERSITY):pgm_to_g}
+#    given_dict = {U_UNIVERSITY_CODE: 'www.13.com'}
+#    inf_dict = {PROGRAM_CODE: 'ms', UNIVERSITY: 'Stanford'}
     
 #    print(exp.get_total_count(ug_to_g))
 #    print(exp.get_conditional_probability({(U_UNIVERSITY_CODE, UNIVERSITY):ug_to_g}, U_UNIVERSITY_CODE, UNIVERSITY, 'www.13.com', 'Stanford'))
 #    print(exp.get_prior_probability(ug_to_g, 'Stanford'))
-    print(exp.get_numerator(summary_graph_dict, given_dict, inf_dict))    
-    return None
+#    print(exp.generic_get_estimated_result(summary_graph_dict, given_dict, inf_dict))
+#    print(exp.get_numerator(summary_graph_dict, given_dict, inf_dict))    
+#    print(exp.get_denominator(summary_graph_dict, given_dict))
+#    return None
+#========TEST CONDITIONAL PROBABILITY========#
 
-    """
+    """    
     att_dict = {U_UNIVERSITY_CODE: 'www.13.com', \
             PROGRAM_CODE: 'ms', \
             UNIVERSITY: 'Stanford'}

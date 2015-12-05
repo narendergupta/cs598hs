@@ -37,20 +37,23 @@ class Experimenter:
         return summary_graph_dict
     #========PREPROCESSING========#
 
-    #========GET THE PROBABILITIES ========#
+    #========GET THE PROBABILITIES AND GENERIC ESTIMATION FUNCTION========#
     def get_numerator(self, summary_graph_dict, given_dict, infer_dict):
         numerator = 1
         for key1 in infer_dict:
             prod = 1
             for key2 in given_dict:
                 prod = prod * self.get_conditional_probability(summary_graph_dict, key2, key1, given_dict[key2], infer_dict[key1])
-            for graph in summary_graph_dict:
-                if key1 in graph:
-                    break
-            prod = prod * self.get_prior_probability(summary_graph_dict[graph], infer_dict[key1])
+            prod = prod * self.get_prior_probability(self.get_particular_graph(summary_graph_dict, key1), infer_dict[key1])
             numerator = numerator * prod
 
         return numerator
+
+    def get_particular_graph(self, summary_graph_dict, key):
+        for graph in summary_graph_dict:
+            if key in graph:
+                return summary_graph_dict[graph]
+        return None
 
     def get_total_count(self, graph):
         return sum([graph[u][v]['weight'] for u,v in graph.edges()])
@@ -69,7 +72,22 @@ class Experimenter:
         total = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==given_val or v==given_val])
         infer = graph[infer_val][given_val]['weight']
         return float(infer)/total
-    #========GET THE PROBABILITIES ========#
+    
+    def get_denominator(self, summary_graph_dict, given_dict):
+        attr_list = given_dict.keys()
+        given_key = attr_list[0]
+        graph_for_given_key = self.get_particular_graph(summary_graph_dict, given_key)
+        prior_for_given_key = self.get_prior_probability(graph_for_given_key, given_dict[given_key])
+        prod = 1
+        for i in xrange(1, len(attr_list)):
+            prod = prod * self.get_conditional_probability(summary_graph_dict, attr_list[i], given_key, given_dict[attr_list[i]], given_dict[given_key])
+        prod = prod * prior_for_given_key
+        return prod
+    
+    def generic_get_estimated_result(self, summary_graph_dict, given_dict, infer_dict):
+        return self.get_numerator(summary_graph_dict, given_dict, infer_dict) / (self.get_denominator(summary_graph_dict, given_dict) ** len(infer_dict))
+    #========GET THE PROBABILITIES AND GENERIC ESTIMATION FUNCTION========#
+
 #==========================================================================================================================#
 
     """
@@ -157,9 +175,9 @@ class Experimenter:
                 else:
                     G[node1][node2]['weight'] += 1
 
-        nx.draw_networkx(G,with_labels=True,)
+#        nx.draw_networkx(G,with_labels=True,)
         #plt.savefig('../data/results/figures/summary_graph.png')
-        plt.show()
+#        plt.show()
         return G
 
     def get_grad_uni_summary_graph(self, attr):
@@ -180,9 +198,9 @@ class Experimenter:
                         else:
                             G[u_uni][label]['weight'] += 1
 
-        nx.draw_networkx(G,with_labels=True,)
+#        nx.draw_networkx(G,with_labels=True,)
         #plt.savefig('../data/results/figures/summary_graph.png')
-        plt.show()
+#        plt.show()
         return G
 
 #============================================================

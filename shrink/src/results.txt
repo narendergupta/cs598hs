@@ -7,3 +7,10 @@
 Estimated:0.0924611476389719 
 Actual:0.06903765690376569
 
+
+======= GENERIC --- North Carolina State University and MS given www.bits-pilani.ac.in =======
+3
+33 478
+Estimated: 0.03393695266172166
+Actual: 0.06903765690376569
+
