@@ -4,7 +4,7 @@
 336 -- out_ug_total
 478 -- out_pgm_total
 33 478
-Estimated:0.0924611476389719 
+Estimated:0.0924611476389719
 Actual:0.06903765690376569
 
 
@@ -32,5 +32,5 @@ Prior Probability P(ms) is 0.865247
 Prior Probability P(www.bits-pilani.ac.in) is 0.071173
 (0.03393695266172166, 0.06903765690376569)
 
-The conditional probabilities don't match with the old estimate. This is something that is going wrong. 
-
+The conditional probabilities don't match with the old estimate. This is something that is going wrong.
+--> See TODO in experimenter.py

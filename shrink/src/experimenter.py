@@ -44,46 +44,78 @@ class Experimenter:
             prod = 1
             for key2 in given_dict:
                 prod = prod * self.get_conditional_probability(summary_graph_dict, key2, key1, given_dict[key2], infer_dict[key1])
-            prod = prod * self.get_prior_probability(self.get_particular_graph(summary_graph_dict, key1), infer_dict[key1])
+            graph_for_given_key, attr_ind = self.get_particular_graph(summary_graph_dict, key1)
+            prod = prod * self.get_prior_probability(graph_for_given_key, attr_ind, infer_dict[key1])
             numerator = numerator * prod
 
         return numerator
 
     def get_particular_graph(self, summary_graph_dict, key):
-        for graph in summary_graph_dict:
-            if key in graph:
-                return summary_graph_dict[graph]
-        return None
+        for attr_tup in summary_graph_dict:
+            if key in attr_tup:
+                return summary_graph_dict[attr_tup], attr_tup.index(key)
+        return None, None
 
     def get_total_count(self, graph):
         return sum([graph[u][v]['weight'] for u,v in graph.edges()])
-    
-    def get_prior_probability(self, graph, att_val):
-        total_att = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==att_val or v==att_val])
+
+    def get_prior_probability(self, graph, attr_ind, att_val):
+        total_att = 0
+        if(attr_ind == 0):
+            total_att = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==att_val])
+        else:
+            total_att = sum([graph[u][v]['weight'] for u,v in graph.edges() if v==att_val])
         return float(total_att)/self.get_total_count(graph)
 
     def get_conditional_probability(self, summary_graph_dict, infer_type, given_type, infer_val, given_val):
         """
         get probability of infer/given
         """
-        if (infer_type, given_type) in summary_graph_dict: graph = summary_graph_dict[(infer_type, given_type)]
+        infer_first = False
+        if (infer_type, given_type) in summary_graph_dict:
+            graph = summary_graph_dict[(infer_type, given_type)]
+            infer_first = True
         elif (given_type, infer_type) in summary_graph_dict: graph = summary_graph_dict[(given_type, infer_type)]
         else: return 0
-        total = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==given_val or v==given_val])
-        infer = graph[infer_val][given_val]['weight']
+        total = 0
+        if infer_first:
+            total = sum([graph[u][v]['weight'] for u,v in graph.edges() if v==given_val])
+        else:
+            total = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==given_val])
+        infer = 0
+        if infer_first:
+            infer = graph[infer_val][given_val]['weight']
+        else:
+            infer = graph[given_val][infer_val]['weight']
         return float(infer)/total
-    
+
+    #TODO
+    '''NOTE:
+      Out method is giving undue importance to one attribute when calculating the denominator.
+      In fact, the way we are solving this, the current implementation re-calculates things
+      many times which eventually cancel eachother out.
+
+      P(a,b,c....z | 1,2,3....10) will simplify to:
+      P(a|_phi_) * P(b|_phi_) * ....* P(z|_phi_)
+
+      Where _phi_ can be any attribute out of the given attributes.
+      In the below function, _phi_ is taken to be attr_list[0].
+      There is something wrong with this since everything boils down to being
+      conditioned on just one attribute out of all given attributes.
+
+      Also, we are using Naive Bayes twice in our formula (Page 3 midterm report). This might be wrong.
+    '''
     def get_denominator(self, summary_graph_dict, given_dict):
         attr_list = given_dict.keys()
         given_key = attr_list[0]
-        graph_for_given_key = self.get_particular_graph(summary_graph_dict, given_key)
-        prior_for_given_key = self.get_prior_probability(graph_for_given_key, given_dict[given_key])
+        graph_for_given_key, attr_ind = self.get_particular_graph(summary_graph_dict, given_key)
+        prior_for_given_key = self.get_prior_probability(graph_for_given_key, attr_ind, given_dict[given_key])
         prod = 1
         for i in xrange(1, len(attr_list)):
             prod = prod * self.get_conditional_probability(summary_graph_dict, attr_list[i], given_key, given_dict[attr_list[i]], given_dict[given_key])
         prod = prod * prior_for_given_key
         return prod
-    
+
     def generic_get_estimated_result(self, summary_graph_dict, given_dict, infer_dict):
         return self.get_numerator(summary_graph_dict, given_dict, infer_dict) / (self.get_denominator(summary_graph_dict, given_dict) ** len(infer_dict))
     #========GET THE PROBABILITIES AND GENERIC ESTIMATION FUNCTION========#
@@ -92,7 +124,7 @@ class Experimenter:
 
     """
     NEED TO COME FROM GRAPH AND NOT FROM THE ENTIRE DATA
-    
+
     def get_denominator_estimation(self, att_dict, num_infer):
         total_data = len(self.dm.data)
         infer_data = 0
@@ -105,9 +137,9 @@ class Experimenter:
 
         return (float(infer_data)/total_data)**num_infer
     """
-    
+
     def get_estimated_result(self, undergrad_grad, pgm_ugrad, att_dict):
-        undergrad = att_dict[U_UNIVERSITY_CODE]
+        undergrad = att_dict[other_attrVERSITY_CODE]
         grad = att_dict[UNIVERSITY]
         pgm = att_dict[PROGRAM_CODE]
         if undergrad_grad.has_edge(undergrad,grad) is False or \
@@ -130,7 +162,7 @@ class Experimenter:
             frac_2 = float(out_pgm_ugrad) / out_pgm_total
             return frac_1 * frac_2
 
-   
+
     def get_actual_result(self, given_dict, infer_dict):
         given_count = 0
         inferred_count = 0
@@ -138,24 +170,24 @@ class Experimenter:
             passed = True
             for key in given_dict:
                 if key == UNIVERSITY:
-                    passed = passed and (given_dict[key] in row and row[given_dict[key]] == ADMIT) 
+                    passed = passed and (given_dict[key] in row and row[given_dict[key]] == ADMIT)
                 else:
                     passed = passed and (key in row and row[key] == given_dict[key])
                 if not passed: break
             if passed:
-                given_count += 1 
+                given_count += 1
                 passed_infer = True
                 for key in infer_dict:
                     if key == UNIVERSITY:
-                        passed_infer = passed_infer and (infer_dict[key] in row and row[infer_dict[key]] == ADMIT)     
+                        passed_infer = passed_infer and (infer_dict[key] in row and row[infer_dict[key]] == ADMIT)
                     else:
                         passed_infer = passed_infer and (key in row and row[key] == infer_dict[key])
                     if not passed_infer: break
                 if passed_infer: inferred_count += 1
-           
-        print inferred_count, given_count 
 
-        return float(inferred_count) / given_count 
+        print inferred_count, given_count
+
+        return float(inferred_count) / given_count
 
 
     def get_summary_graph(self, attr1_type, attr2_type):
@@ -184,19 +216,19 @@ class Experimenter:
         G = nx.Graph()
         uni_labels = self.dm.get_uni_labels()
         for row in self.dm.data:
-            u_uni = row[attr]
-            if u_uni not in G:
-                G.add_node(u_uni)
+            other_attr = row[attr]
+            if other_attr not in G:
+                G.add_node(other_attr)
             for label in uni_labels:
                 if label in row and row[label] == ADMIT:
                     if label not in G:
                         G.add_node(label)
-                        G.add_edge(u_uni,label,weight=1)
+                        G.add_edge(other_attr,label,weight=1)
                     else:
-                        if (u_uni,label) not in G.edges():
-                            G.add_edge(u_uni,label,weight=1)
+                        if (other_attr,label) not in G.edges():
+                            G.add_edge(other_attr,label,weight=1)
                         else:
-                            G[u_uni][label]['weight'] += 1
+                            G[other_attr][label]['weight'] += 1
 
 #        nx.draw_networkx(G,with_labels=True,)
         #plt.savefig('../data/results/figures/summary_graph.png')
