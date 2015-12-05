@@ -3,7 +3,6 @@ from copy import deepcopy
 from datamodel import DataModel
 from gen_utils import *
 from itertools import combinations
-
 import csv
 import math
 import matplotlib.pyplot as plt
@@ -22,6 +21,37 @@ class Experimenter:
         self.dm = dm
         return None
 
+    #========PREPROCESSING========#
+    def get_all_summary_graphs(self, attr_list):
+        summary_graph_dict = {}
+
+        for i in xrange(len(attr_list)):
+            for j in xrange(i+1, len(attr_list)):
+                not_uni = None
+                if attr_list[i] == UNIVERSITY: not_uni = j
+                elif attr_list[j] == UNIVERSITY: not_uni = i
+                if not not_uni == None:
+                    summary_graph_dict[(attr_list[i], attr_list[j])] = self.get_grad_uni_summary_graph(attr_list[not_uni])
+                else:
+                    summary_graph_dict[(attr_list[i], attr_list[j])] = self.get_summary_graph(attr_list[i], attr_list[j])
+        return summary_graph_dict
+    #========PREPROCESSING========#
+
+    """
+    NEED TO COME FROM GRAPH AND NOT FROM THE ENTIRE DATA
+    
+    def get_denominator_estimation(self, att_dict, num_infer):
+        total_data = len(self.dm.data)
+        infer_data = 0
+        for row in self.dm.data:
+            passed = True
+            for key in att_dict:
+                passed = passed and (key in row and row[key] == att_dict[key])
+                if not passed: break
+            if passed: infer_data += 1
+
+        return (float(infer_data)/total_data)**num_infer
+    """
     
     def get_estimated_result(self, undergrad_grad, pgm_ugrad, att_dict):
         undergrad = att_dict[U_UNIVERSITY_CODE]
@@ -92,9 +122,9 @@ class Experimenter:
                 else:
                     G[node1][node2]['weight'] += 1
 
-#        nx.draw_networkx(G,with_labels=True,)
+        nx.draw_networkx(G,with_labels=True,)
         #plt.savefig('../data/results/figures/summary_graph.png')
- #       plt.show()
+        plt.show()
         return G
 
     def get_grad_uni_summary_graph(self, attr):
@@ -115,9 +145,9 @@ class Experimenter:
                         else:
                             G[u_uni][label]['weight'] += 1
 
-#        nx.draw_networkx(G,with_labels=True,)
+        nx.draw_networkx(G,with_labels=True,)
         #plt.savefig('../data/results/figures/summary_graph.png')
-#        plt.show()
+        plt.show()
         return G
 
 #============================================================
