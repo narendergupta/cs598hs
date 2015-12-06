@@ -44,8 +44,8 @@ class Experimenter:
             prod = 1
             for key2 in given_dict:
                 prod = prod * self.get_conditional_probability(summary_graph_dict, key2, key1, given_dict[key2], infer_dict[key1])
-            graph_for_given_key, attr_ind = self.get_particular_graph(summary_graph_dict, key1)
-            prod = prod * self.get_prior_probability(graph_for_given_key, attr_ind, infer_dict[key1])
+            graph_for_given_key = self.get_particular_graph(summary_graph_dict, key1)
+            prod = prod * self.get_prior_probability(graph_for_given_key, infer_dict[key1])
             numerator = numerator * prod
 
         return numerator
@@ -53,18 +53,16 @@ class Experimenter:
     def get_particular_graph(self, summary_graph_dict, key):
         for attr_tup in summary_graph_dict:
             if key in attr_tup:
-                return summary_graph_dict[attr_tup], attr_tup.index(key)
-        return None, None
+                return summary_graph_dict[attr_tup]
+        return None
 
     def get_total_count(self, graph):
         return sum([graph[u][v]['weight'] for u,v in graph.edges()])
 
-    def get_prior_probability(self, graph, attr_ind, att_val):
+    def get_prior_probability(self, graph, att_val):
         total_att = 0
-        if(attr_ind == 0):
-            total_att = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==att_val])
-        else:
-            total_att = sum([graph[u][v]['weight'] for u,v in graph.edges() if v==att_val])
+        total_att = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==att_val or v == att_val])
+        print("P(%s) = %f" % (att_val, float(total_att)/self.get_total_count(graph )))
         return float(total_att)/self.get_total_count(graph)
 
     def get_conditional_probability(self, summary_graph_dict, infer_type, given_type, infer_val, given_val):
@@ -87,6 +85,8 @@ class Experimenter:
             infer = graph[infer_val][given_val]['weight']
         else:
             infer = graph[given_val][infer_val]['weight']
+        
+        print("P(%s/%s) = %f" %(infer_val, given_val, float(infer)/total))
         return float(infer)/total
 
     #TODO
@@ -106,6 +106,15 @@ class Experimenter:
       Also, we are using Naive Bayes twice in our formula (Page 3 midterm report). This might be wrong.
     '''
     def get_denominator(self, summary_graph_dict, given_dict):
+        prod = 1
+        for key in given_dict:
+            graph_for_given_key = self.get_particular_graph(summary_graph_dict, key)
+            prior_for_given_key = self.get_prior_probability(graph_for_given_key, given_dict[key])
+
+            prod = prod * prior_for_given_key
+        return prod 
+       
+        """ 
         attr_list = given_dict.keys()
         given_key = attr_list[0]
         graph_for_given_key, attr_ind = self.get_particular_graph(summary_graph_dict, given_key)
@@ -115,9 +124,11 @@ class Experimenter:
             prod = prod * self.get_conditional_probability(summary_graph_dict, attr_list[i], given_key, given_dict[attr_list[i]], given_dict[given_key])
         prod = prod * prior_for_given_key
         return prod
+        """
 
     def generic_get_estimated_result(self, summary_graph_dict, given_dict, infer_dict):
-        return self.get_numerator(summary_graph_dict, given_dict, infer_dict) / (self.get_denominator(summary_graph_dict, given_dict) ** len(infer_dict))
+        return self.get_numerator(summary_graph_dict, given_dict, infer_dict) / (self.get_denominator(summary_graph_dict, given_dict)**len(infer_dict)) 
+    
     #========GET THE PROBABILITIES AND GENERIC ESTIMATION FUNCTION========#
 
 #==========================================================================================================================#
@@ -139,7 +150,7 @@ class Experimenter:
     """
 
     def get_estimated_result(self, undergrad_grad, pgm_ugrad, att_dict):
-        undergrad = att_dict[other_attrVERSITY_CODE]
+        undergrad = att_dict[U_UNIVERSITY_CODE]
         grad = att_dict[UNIVERSITY]
         pgm = att_dict[PROGRAM_CODE]
         if undergrad_grad.has_edge(undergrad,grad) is False or \

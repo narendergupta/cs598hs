@@ -34,3 +34,20 @@ Prior Probability P(www.bits-pilani.ac.in) is 0.071173
 
 The conditional probabilities don't match with the old estimate. This is something that is going wrong.
 --> See TODO in experimenter.py
+
+
+=============================== CORRECTED RESULTS WITH INDEPENDENCE ASSUMPTION ON DENOMINATOR =====================
+Set up data complete
+Got all summary graphs
+[('Previous_University_Code', 'Program_Code'), ('Previous_University_Code', 'University'), ('Program_Code', 'University')]
+3
+--------------------------------------------
+33 478
+Got actual result
+P(www.bits-pilani.ac.in/North Carolina State University) = 0.208861
+P(North Carolina State University) = 0.026201
+P(www.bits-pilani.ac.in/ms) = 0.108801
+P(ms) = 0.865247
+P(www.bits-pilani.ac.in) = 0.071173
+Got estimated result
+(0.10169884061546373, 0.06903765690376569)
