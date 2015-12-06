@@ -14,28 +14,6 @@ Actual:0.06903765690376569
 Estimated: 0.03393695266172166
 Actual: 0.06903765690376569
 
-======= DETAILED OUTPUT WITH GENERIC ESTIMATOR =======
-
-OLD ESTIMATE
-336 -- out_ug_total
-0.098214 -- grad_given_ug_probability
-478 -- out_pgm_total
-0.941423 -- pgm_given_ug_probability
-OLD ---> 0.092461
-
-NEW ESTIMATE
-33 478
-Conditional probability P(www.bits-pilani.ac.in/North Carolina State University) is 0.097923
-Prior Probability P(North Carolina State University) is 0.026201
-Conditional probability P(www.bits-pilani.ac.in/ms) is 0.077439
-Prior Probability P(ms) is 0.865247
-Prior Probability P(www.bits-pilani.ac.in) is 0.071173
-(0.03393695266172166, 0.06903765690376569)
-
-The conditional probabilities don't match with the old estimate. This is something that is going wrong.
---> See TODO in experimenter.py
-
-
 =============================== CORRECTED RESULTS WITH INDEPENDENCE ASSUMPTION ON DENOMINATOR =====================
 Set up data complete
 Got all summary graphs
