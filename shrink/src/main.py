@@ -12,16 +12,18 @@ def main(args):
             dm.filter_data(
                 filter_type=LIST, feature=U_MAJOR_CODE, shortlist=['ee','cs']))
     attributes_all = [U_GRADE_NORM, GRE_QUANT_NORM, GRE_VERBAL_NORM, GRE_AWA_NORM,\
-            TOEFL_NORM, PROGRAM_CODE, U_MAJOR_CODE, TERM, YEAR, U_UNIVERSITY_RANK]
-    exp = Experimenter(dm)
+            TOEFL_NORM, PROGRAM_CODE, U_MAJOR_CODE, TERM, YEAR]
+    attr_list = [U_UNIVERSITY_CODE, PROGRAM_CODE, UNIVERSITY]
+    exp = Experimenter(dm, attr_list)
     print "Set up data complete"
 
     #=======PREPROCESSING========#
-    attr_list = [U_UNIVERSITY_CODE, PROGRAM_CODE, UNIVERSITY]
+    '''
     summary_graphs = exp.get_all_summary_graphs(attr_list)
     print "Got all summary graphs"
     print summary_graphs.keys()
     print len(summary_graphs)
+    '''
     #=======PREPROCESSING========#
 
     undergrad_to_grad_uni = exp.get_grad_uni_summary_graph(U_UNIVERSITY_CODE)
@@ -43,7 +45,7 @@ def main(args):
     inf_dict = {PROGRAM_CODE: 'ms', UNIVERSITY: 'North Carolina State University'}
     acc = exp.get_actual_result(given_dict, inf_dict)
     print "Got actual result"
-    est = exp.generic_get_estimated_result(summary_graphs, given_dict, inf_dict)
+    est = exp.generic_get_estimated_result(given_dict, inf_dict)
     print "Got estimated result"
     print(est, acc)
     return None

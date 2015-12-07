@@ -13,8 +13,10 @@ import statistics as stats
 
 class Experimenter:
     """Execute and manage machine learning experiments"""
-    def __init__(self, dm):
+    def __init__(self, dm, attr_list):
         self.dm = dm
+        self.summary_graphs = None
+        self.attr_list = attr_list
 
 
     def set_datamodel(self, dm):
@@ -22,18 +24,21 @@ class Experimenter:
         return None
 #==========================================================================================================================#
     #========PREPROCESSING========#
-    def get_all_summary_graphs(self, attr_list):
-        summary_graph_dict = {}
+    def get_all_summary_graphs(self):
+        if self.summary_graphs is not None:
+            return self.summary_graphs
 
-        for i in xrange(len(attr_list)):
-            for j in xrange(i+1, len(attr_list)):
+        summary_graph_dict = {}
+        for i in xrange(len(self.attr_list)):
+            for j in xrange(i+1, len(self.attr_list)):
                 not_uni = None
-                if attr_list[i] == UNIVERSITY: not_uni = j
-                elif attr_list[j] == UNIVERSITY: not_uni = i
+                if self.attr_list[i] == UNIVERSITY: not_uni = j
+                elif self.attr_list[j] == UNIVERSITY: not_uni = i
                 if not not_uni == None:
-                    summary_graph_dict[(attr_list[i], attr_list[j])] = self.get_grad_uni_summary_graph(attr_list[not_uni])
+                    summary_graph_dict[(self.attr_list[i], self.attr_list[j])] = self.get_grad_uni_summary_graph(self.attr_list[not_uni])
                 else:
-                    summary_graph_dict[(attr_list[i], attr_list[j])] = self.get_summary_graph(attr_list[i], attr_list[j])
+                    summary_graph_dict[(self.attr_list[i], self.attr_list[j])] = self.get_summary_graph(self.attr_list[i], self.attr_list[j])
+        self.summary_graphs = summary_graph_dict
         return summary_graph_dict
     #========PREPROCESSING========#
 
@@ -67,44 +72,28 @@ class Experimenter:
 
     def get_conditional_probability(self, summary_graph_dict, infer_type, given_type, infer_val, given_val):
         """
-        get probability of infer/given
+        get probability of infer|given
         """
         infer_first = False
         if (infer_type, given_type) in summary_graph_dict:
             graph = summary_graph_dict[(infer_type, given_type)]
             infer_first = True
         elif (given_type, infer_type) in summary_graph_dict: graph = summary_graph_dict[(given_type, infer_type)]
-        else: return 0
-        total = 0
-        if infer_first:
-            total = sum([graph[u][v]['weight'] for u,v in graph.edges() if v==given_val])
         else:
-            total = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==given_val])
-        infer = 0
+            print("Summary graph not found! Fatal!")
+            quit()
+        infer = 0.0
+        total = 0.0
         if infer_first:
             infer = graph[infer_val][given_val]['weight']
+            total = sum([graph[u][v]['weight'] for u,v in graph.edges() if v==given_val])
         else:
             infer = graph[given_val][infer_val]['weight']
-        
+            total = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==given_val])
+
         print("P(%s/%s) = %f" %(infer_val, given_val, float(infer)/total))
         return float(infer)/total
 
-    #TODO
-    '''NOTE:
-      Out method is giving undue importance to one attribute when calculating the denominator.
-      In fact, the way we are solving this, the current implementation re-calculates things
-      many times which eventually cancel eachother out.
-
-      P(a,b,c....z | 1,2,3....10) will simplify to:
-      P(a|_phi_) * P(b|_phi_) * ....* P(z|_phi_)
-
-      Where _phi_ can be any attribute out of the given attributes.
-      In the below function, _phi_ is taken to be attr_list[0].
-      There is something wrong with this since everything boils down to being
-      conditioned on just one attribute out of all given attributes.
-
-      Also, we are using Naive Bayes twice in our formula (Page 3 midterm report). This might be wrong.
-    '''
     def get_denominator(self, summary_graph_dict, given_dict):
         prod = 1
         for key in given_dict:
@@ -112,42 +101,15 @@ class Experimenter:
             prior_for_given_key = self.get_prior_probability(graph_for_given_key, given_dict[key])
 
             prod = prod * prior_for_given_key
-        return prod 
-       
-        """ 
-        attr_list = given_dict.keys()
-        given_key = attr_list[0]
-        graph_for_given_key, attr_ind = self.get_particular_graph(summary_graph_dict, given_key)
-        prior_for_given_key = self.get_prior_probability(graph_for_given_key, attr_ind, given_dict[given_key])
-        prod = 1
-        for i in xrange(1, len(attr_list)):
-            prod = prod * self.get_conditional_probability(summary_graph_dict, attr_list[i], given_key, given_dict[attr_list[i]], given_dict[given_key])
-        prod = prod * prior_for_given_key
         return prod
-        """
 
-    def generic_get_estimated_result(self, summary_graph_dict, given_dict, infer_dict):
-        return self.get_numerator(summary_graph_dict, given_dict, infer_dict) / (self.get_denominator(summary_graph_dict, given_dict)**len(infer_dict)) 
-    
+    def generic_get_estimated_result(self, given_dict, infer_dict):
+        summary_graph_dict = self.get_all_summary_graphs()
+        return self.get_numerator(summary_graph_dict, given_dict, infer_dict) / (self.get_denominator(summary_graph_dict, given_dict)**len(infer_dict))
+
     #========GET THE PROBABILITIES AND GENERIC ESTIMATION FUNCTION========#
 
 #==========================================================================================================================#
-
-    """
-    NEED TO COME FROM GRAPH AND NOT FROM THE ENTIRE DATA
-
-    def get_denominator_estimation(self, att_dict, num_infer):
-        total_data = len(self.dm.data)
-        infer_data = 0
-        for row in self.dm.data:
-            passed = True
-            for key in att_dict:
-                passed = passed and (key in row and row[key] == att_dict[key])
-                if not passed: break
-            if passed: infer_data += 1
-
-        return (float(infer_data)/total_data)**num_infer
-    """
 
     def get_estimated_result(self, undergrad_grad, pgm_ugrad, att_dict):
         undergrad = att_dict[U_UNIVERSITY_CODE]
