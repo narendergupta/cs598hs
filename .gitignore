@@ -58,6 +58,7 @@ target/
 
 #Swap files
 *.swp
+.DS_Store
 
 #Data set files.
 *.csv

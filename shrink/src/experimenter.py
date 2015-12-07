@@ -117,6 +117,8 @@ class Experimenter:
         for key in given_dict:
             graph_for_given_key = self.get_particular_graph(key)
             prior_for_given_key = self.get_prior_probability(graph_for_given_key, given_dict[key])
+            if(prior_for_given_key == 0):
+                return -1
             prod = prod * prior_for_given_key
         return prod
 
@@ -124,6 +126,9 @@ class Experimenter:
     def generic_get_estimated_result(self, given_dict, infer_dict):
         numer = self.get_numerator(given_dict, infer_dict)
         denom = self.get_denominator(given_dict)**len(infer_dict)
+        #Done to avoid division by zero error.
+        if(denom == -1):
+            return 0.0
         return numer/denom
 
     #========GET THE PROBABILITIES AND GENERIC ESTIMATION FUNCTION========#
@@ -157,6 +162,7 @@ class Experimenter:
         print inferred_count, given_count
         return float(inferred_count) / given_count
 
+
     def get_summary_graph(self, attr1_type, attr2_type):
         G = nx.Graph()
         #uni_labels = self.dm.get_uni_labels()
@@ -175,9 +181,10 @@ class Experimenter:
                     G[node1][node2]['weight'] += 1
 
 #        nx.draw_networkx(G,with_labels=True,)
-#        plt.savefig('../data/results/figures/summary_graph.png')
+#        plt.savefig('../results/figures/summary_graph_' + attr1_type + '_' + attr2_type + '.png')
 #        plt.show()
         return G
+
 
     def get_grad_uni_summary_graph(self, attr):
         G = nx.Graph()
@@ -196,9 +203,8 @@ class Experimenter:
                             G.add_edge(other_attr,label,weight=1)
                         else:
                             G[other_attr][label]['weight'] += 1
-
 #        nx.draw_networkx(G,with_labels=True,)
-#        plt.savefig('../data/results/figures/summary_graph.png')
+#        plt.savefig('../results/figures/summary_graph_UNIVERSITY_' + attr + '.png')
 #        plt.show()
         return G
 
