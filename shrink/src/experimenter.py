@@ -16,12 +16,13 @@ class Experimenter:
     def __init__(self, dm, attr_list):
         self.dm = dm
         self.summary_graphs = None
+        self.total_count = None
         self.attr_list = attr_list
-
 
     def set_datamodel(self, dm):
         self.dm = dm
         return None
+
 #==========================================================================================================================#
     #========PREPROCESSING========#
     def get_all_summary_graphs(self):
@@ -62,12 +63,14 @@ class Experimenter:
         return None
 
     def get_total_count(self, graph):
-        return sum([graph[u][v]['weight'] for u,v in graph.edges()])
+        if not self.total_count:
+            self.total_count = sum([graph[u][v]['weight'] for u,v in graph.edges()])
+        return self.total_count
 
     def get_prior_probability(self, graph, att_val):
         total_att = 0
         total_att = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==att_val or v == att_val])
-        print("P(%s) = %f" % (att_val, float(total_att)/self.get_total_count(graph )))
+        print("P(%s) = %f" % (att_val, float(total_att)/self.get_total_count(graph)))
         return float(total_att)/self.get_total_count(graph)
 
     def get_conditional_probability(self, summary_graph_dict, infer_type, given_type, infer_val, given_val):
@@ -99,7 +102,6 @@ class Experimenter:
         for key in given_dict:
             graph_for_given_key = self.get_particular_graph(summary_graph_dict, key)
             prior_for_given_key = self.get_prior_probability(graph_for_given_key, given_dict[key])
-
             prod = prod * prior_for_given_key
         return prod
 
@@ -110,31 +112,6 @@ class Experimenter:
     #========GET THE PROBABILITIES AND GENERIC ESTIMATION FUNCTION========#
 
 #==========================================================================================================================#
-
-    def get_estimated_result(self, undergrad_grad, pgm_ugrad, att_dict):
-        undergrad = att_dict[U_UNIVERSITY_CODE]
-        grad = att_dict[UNIVERSITY]
-        pgm = att_dict[PROGRAM_CODE]
-        if undergrad_grad.has_edge(undergrad,grad) is False or \
-                pgm_ugrad.has_edge(pgm,undergrad) is False:
-                    return 0
-        else:
-            u_g_edges = undergrad_grad.edges()
-            out_undergrad_total = \
-                    sum([undergrad_grad[u][v]['weight'] \
-                    for u,v in u_g_edges if u==undergrad or v==undergrad])
-            out_undergrad_grad = undergrad_grad[undergrad][grad]['weight']
-            frac_1 = float(out_undergrad_grad) / out_undergrad_total
-            print "%d -- out_ug_total" % out_undergrad_total
-            p_ug_edges = pgm_ugrad.edges()
-            out_pgm_total = \
-                    sum([pgm_ugrad[u][v]['weight'] \
-                    for u,v in p_ug_edges if u==undergrad or v==undergrad])
-            out_pgm_ugrad = pgm_ugrad[pgm][undergrad]['weight']
-            print "%d -- out_pgm_total" % out_pgm_total
-            frac_2 = float(out_pgm_ugrad) / out_pgm_total
-            return frac_1 * frac_2
-
 
     def get_actual_result(self, given_dict, infer_dict):
         given_count = 0
@@ -159,9 +136,7 @@ class Experimenter:
                 if passed_infer: inferred_count += 1
 
         print inferred_count, given_count
-
         return float(inferred_count) / given_count
-
 
     def get_summary_graph(self, attr1_type, attr2_type):
         G = nx.Graph()
@@ -181,7 +156,7 @@ class Experimenter:
                     G[node1][node2]['weight'] += 1
 
 #        nx.draw_networkx(G,with_labels=True,)
-        #plt.savefig('../data/results/figures/summary_graph.png')
+#        plt.savefig('../data/results/figures/summary_graph.png')
 #        plt.show()
         return G
 
@@ -204,7 +179,7 @@ class Experimenter:
                             G[other_attr][label]['weight'] += 1
 
 #        nx.draw_networkx(G,with_labels=True,)
-        #plt.savefig('../data/results/figures/summary_graph.png')
+#        plt.savefig('../data/results/figures/summary_graph.png')
 #        plt.show()
         return G
 
