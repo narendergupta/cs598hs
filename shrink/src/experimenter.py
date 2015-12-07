@@ -55,6 +55,8 @@ class Experimenter:
             for key2 in given_dict:
                 prod *= self.get_conditional_probability(\
                         key2, key1, given_dict[key2], infer_dict[key1])
+                if(prod == 0.0):
+                    return 0.0
             graph_for_given_key = self.get_particular_graph(key1)
             prod = prod * self.get_prior_probability(graph_for_given_key, infer_dict[key1])
             numerator = numerator * prod
@@ -101,10 +103,14 @@ class Experimenter:
         infer = 0.0
         total = 0.0
         if infer_first:
-            infer = graph[infer_val][given_val]['weight']
+            infer = graph.get_edge_data(infer_val, given_val)
+            if not infer:
+                return 0.0
             total = sum([graph[u][v]['weight'] for u,v in graph.edges() if v==given_val])
         else:
-            infer = graph[given_val][infer_val]['weight']
+            infer = graph.get_edge_data(given_val, infer_val)
+            if not infer:
+                return 0.0
             total = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==given_val])
 
         print("P(%s/%s) = %f" %(infer_val, given_val, float(infer)/total))
@@ -160,6 +166,8 @@ class Experimenter:
                 if passed_infer: inferred_count += 1
 
         print inferred_count, given_count
+        if(given_count == 0):
+            return 0.0
         return float(inferred_count) / given_count
 
 
