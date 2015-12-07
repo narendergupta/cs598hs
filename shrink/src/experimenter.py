@@ -56,6 +56,7 @@ class Experimenter:
                 prod *= self.get_conditional_probability(\
                         key2, key1, given_dict[key2], infer_dict[key1])
                 if(prod == 0.0):
+                    print "PRODUCT"
                     return 0.0
             graph_for_given_key = self.get_particular_graph(key1)
             prod = prod * self.get_prior_probability(graph_for_given_key, infer_dict[key1])
@@ -82,8 +83,8 @@ class Experimenter:
         total_att = 0
         total_att = sum([graph[u][v]['weight'] for u,v in graph.edges() \
                 if u==att_val or v == att_val])
-        print("P(%s) = %f" % (att_val, float(total_att)/self.get_total_count(graph)))
-        return float(total_att)/self.get_total_count(graph)
+        print("P(%s) = %f" % (att_val, float(total_att)/len(self.dm.data)))
+        return float(total_att)/len(self.dm.data)
 
 
     def get_conditional_probability(self, infer_type, given_type, infer_val, given_val):
@@ -91,6 +92,16 @@ class Experimenter:
         get probability of infer|given
         """
         summary_graph_dict = self.get_all_summary_graphs()
+        """
+        if (infer_type, given_type) in summary_graph_dict: graph = summary_graph_dict[(infer_type, given_type)]
+        elif (given_type, infer_type) in summary_graph_dict: graph = summary_graph_dict[(given_type, infer_type)]
+        else: return 0
+        total = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==given_val or v==given_val])
+        infer = graph[infer_val][given_val]['weight']
+        print graph[infer_val][given_val]['weight'], graph[given_val][infer_val]['weight']
+        return float(infer)/total 
+        
+        """
         infer_first = False
         if (infer_type, given_type) in summary_graph_dict:
             graph = summary_graph_dict[(infer_type, given_type)]
@@ -105,14 +116,18 @@ class Experimenter:
         if infer_first:
             infer = graph.get_edge_data(infer_val, given_val)['weight']
             if not infer:
+                print "INFER"
                 return 0.0
             total = sum([graph[u][v]['weight'] for u,v in graph.edges() if v==given_val])
         else:
             infer = graph.get_edge_data(given_val, infer_val)['weight']
             if not infer:
+                print "INFER"
                 return 0.0
             total = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==given_val])
-
+        if not total:
+            print "TOTAL"
+            return 0.0
         print("P(%s/%s) = %f" %(infer_val, given_val, float(infer)/total))
         return float(infer)/total
 
@@ -134,6 +149,7 @@ class Experimenter:
         denom = self.get_denominator(given_dict)**len(infer_dict)
         #Done to avoid division by zero error.
         if(denom == -1):
+            print "DENOMINATOR"
             return 0.0
         return numer/denom
 
