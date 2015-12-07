@@ -33,6 +33,7 @@ def main(args):
     est = exp.generic_get_estimated_result(given_dict, inf_dict)
     print "Got estimated result"
     print(est, acc)
+#    print(est)
     return None
 #========TEST CONDITIONAL PROBABILITY========#
 #    summary_graph_dict = {(U_UNIVERSITY_CODE, UNIVERSITY):ug_to_g, (PROGRAM_CODE, U_UNIVERSITY_CODE):pgm_to_ug, (PROGRAM_CODE, UNIVERSITY):pgm_to_g}

@@ -59,13 +59,14 @@ class Experimenter:
     def get_particular_graph(self, summary_graph_dict, key):
         for attr_tup in summary_graph_dict:
             if key in attr_tup:
-                return summary_graph_dict[attr_tup]
+                if key == UNIVERSITY:
+                    return summary_graph_dict[attr_tup]
+                if UNIVERSITY not in attr_tup:
+                    return summary_graph_dict[attr_tup]
         return None
 
     def get_total_count(self, graph):
-        if not self.total_count:
-            self.total_count = sum([graph[u][v]['weight'] for u,v in graph.edges()])
-        return self.total_count
+        return sum([graph[u][v]['weight'] for u,v in graph.edges()])
 
     def get_prior_probability(self, graph, att_val):
         total_att = 0
