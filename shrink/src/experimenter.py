@@ -56,7 +56,7 @@ class Experimenter:
                 prod *= self.get_conditional_probability(\
                         key2, key1, given_dict[key2], infer_dict[key1])
                 if(prod == 0.0):
-                    print "PRODUCT"
+                    print "P(%s/%s) PRODUCT" %(key2, key1)
                     return 0.0
             graph_for_given_key = self.get_particular_graph(key1)
             prod = prod * self.get_prior_probability(graph_for_given_key, infer_dict[key1])
@@ -76,15 +76,19 @@ class Experimenter:
 
 
     def get_total_count(self, graph):
-        return sum([graph[u][v]['weight'] for u,v in graph.edges()])
-
+        _sum = 0
+        for tup in graph.edges(data=True):
+            _sum += tup[2]['weight']
+        return _sum
 
     def get_prior_probability(self, graph, att_val):
         total_att = 0
-        total_att = sum([graph[u][v]['weight'] for u,v in graph.edges() \
-                if u==att_val or v == att_val])
-        print("P(%s) = %f" % (att_val, float(total_att)/len(self.dm.data)))
-        return float(total_att)/len(self.dm.data)
+        for tup in graph.edges(data=True):
+            if att_val in tup:
+                total_att += tup[2]['weight']
+
+        print("P(%s) = %f" % (att_val, float(total_att)/self.get_total_count(graph)))
+        return float(total_att)/self.get_total_count(graph)
 
 
     def get_conditional_probability(self, infer_type, given_type, infer_val, given_val):
@@ -92,45 +96,25 @@ class Experimenter:
         get probability of infer|given
         """
         summary_graph_dict = self.get_all_summary_graphs()
-        """
+    
         if (infer_type, given_type) in summary_graph_dict: graph = summary_graph_dict[(infer_type, given_type)]
         elif (given_type, infer_type) in summary_graph_dict: graph = summary_graph_dict[(given_type, infer_type)]
         else: return 0
-        total = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==given_val or v==given_val])
-        infer = graph[infer_val][given_val]['weight']
-        print graph[infer_val][given_val]['weight'], graph[given_val][infer_val]['weight']
-        return float(infer)/total 
         
-        """
-        infer_first = False
-        if (infer_type, given_type) in summary_graph_dict:
-            graph = summary_graph_dict[(infer_type, given_type)]
-            infer_first = True
-        elif (given_type, infer_type) in summary_graph_dict:
-            graph = summary_graph_dict[(given_type, infer_type)]
-        else:
-            print("Summary graph not found! Fatal!")
-            quit()
         infer = 0.0
         total = 0.0
-        if infer_first:
-            infer = graph.get_edge_data(infer_val, given_val)['weight']
-            if not infer:
-                print "INFER"
-                return 0.0
-            total = sum([graph[u][v]['weight'] for u,v in graph.edges() if v==given_val])
-        else:
-            infer = graph.get_edge_data(given_val, infer_val)['weight']
-            if not infer:
-                print "INFER"
-                return 0.0
-            total = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==given_val])
+        infer = graph.get_edge_data(given_val, infer_val)['weight']
+        if not infer:
+            print "INFER"
+            return 0.0
+        for tup in graph.edges(data=True):
+            if tup[0] == given_val or tup[1] == given_val:
+                total += tup[2]['weight']
         if not total:
-            print "TOTAL"
+            print "P(%s/%s) TOTAL" %(infer_val, given_val)
             return 0.0
         print("P(%s/%s) = %f" %(infer_val, given_val, float(infer)/total))
         return float(infer)/total
-
 
     def get_denominator(self, given_dict):
         summary_graph_dict = self.get_all_summary_graphs()
@@ -199,7 +183,7 @@ class Experimenter:
                 G.add_node(node2)
                 G.add_edge(node1,node2,weight=1)
             else:
-                if (node1, node2) not in G.edges():
+                if not G.has_edge(node1, node2):
                     G.add_edge(node1,node2,weight=1)
                 else:
                     G[node1][node2]['weight'] += 1
@@ -223,7 +207,7 @@ class Experimenter:
                         G.add_node(label)
                         G.add_edge(other_attr,label,weight=1)
                     else:
-                        if (other_attr,label) not in G.edges():
+                        if not G.has_edge(other_attr,label):
                             G.add_edge(other_attr,label,weight=1)
                         else:
                             G[other_attr][label]['weight'] += 1
