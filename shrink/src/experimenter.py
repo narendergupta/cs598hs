@@ -103,12 +103,12 @@ class Experimenter:
         infer = 0.0
         total = 0.0
         if infer_first:
-            infer = graph.get_edge_data(infer_val, given_val)
+            infer = graph.get_edge_data(infer_val, given_val)['weight']
             if not infer:
                 return 0.0
             total = sum([graph[u][v]['weight'] for u,v in graph.edges() if v==given_val])
         else:
-            infer = graph.get_edge_data(given_val, infer_val)
+            infer = graph.get_edge_data(given_val, infer_val)['weight']
             if not infer:
                 return 0.0
             total = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==given_val])
