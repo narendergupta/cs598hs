@@ -8,8 +8,8 @@ import time
 def test_data_size_vs_diff(dm, given_dict, infer_dict):
     #Read all data from data model
     dm.read_data(normalize_data=False)   
-    #attr_list = [U_UNIVERSITY_CODE, PROGRAM_CODE, MAJOR_CODE]#UNIVERSITY]
-    attr_list = [MAJOR_CODE, PROGRAM_CODE, TERM]
+    attr_list = [U_UNIVERSITY_CODE, PROGRAM_CODE, UNIVERSITY, MAJOR_CODE, TERM]
+    #attr_list = [MAJOR_CODE, PROGRAM_CODE, TERM]
     
     #Size of data
     data_size = len(dm.data)
@@ -59,10 +59,10 @@ def main(args):
     """
     print "--------------------------------------------"
     #ACTUAL RESULT
-    #given_dict = {U_UNIVERSITY_CODE: 'www.bits-pilani.ac.in'}
-    #inf_dict = {PROGRAM_CODE: 'ms', MAJOR_CODE: 'cs'}#UNIVERSITY: 'North Carolina State University'}
-    given_dict = {TERM: 'fall'}
-    inf_dict = {PROGRAM_CODE: 'ms', MAJOR_CODE: 'cs'}
+    given_dict = {TERM: 'fall', U_UNIVERSITY_CODE: 'www.bits-pilani.ac.in'}
+    inf_dict = {MAJOR_CODE: 'cs', PROGRAM_CODE: 'ms', UNIVERSITY: 'North Carolina State University'}
+    #given_dict = {TERM: 'fall'}
+    #inf_dict = {PROGRAM_CODE: 'ms', MAJOR_CODE: 'cs'}
     """
     acc = exp.get_actual_result(given_dict, inf_dict)
     print "Got actual result"

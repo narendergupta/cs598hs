@@ -29,3 +29,231 @@ P(ms) = 0.865247
 P(www.bits-pilani.ac.in) = 0.071173
 Got estimated result
 (0.10169884061546373, 0.06903765690376569)
+
+
+=============================== 10 RUNS of P(MS, CS)/FALL ======================================
+--------------------------------------------
+1305 3282
+P(fall/cs) = 0.915679
+P(cs) = 0.419337
+P(fall/ms) = 0.904068
+P(ms) = 0.909945
+P(fall) = 0.906630
+Step:3620--->Actual:0.397623--->Estimate:0.384293
+-------------------------------------------------------------
+2459 6393
+P(fall/cs) = 0.882551
+P(cs) = 0.409254
+P(fall/ms) = 0.879757
+P(ms) = 0.910912
+P(fall) = 0.883011
+Step:7240--->Actual:0.384639--->Estimate:0.371227
+-------------------------------------------------------------
+3568 9553
+P(fall/cs) = 0.876716
+P(cs) = 0.395856
+P(fall/ms) = 0.876712
+P(ms) = 0.914180
+P(fall) = 0.879650
+Step:10860--->Actual:0.373495--->Estimate:0.359472
+-------------------------------------------------------------
+4594 12510
+P(fall/cs) = 0.863385
+P(cs) = 0.387224
+P(fall/ms) = 0.860632
+P(ms) = 0.916229
+P(fall) = 0.863950
+Step:14480--->Actual:0.367226--->Estimate:0.353192
+-------------------------------------------------------------
+5741 15684
+P(fall/cs) = 0.867376
+P(cs) = 0.384088
+P(fall/ms) = 0.863110
+P(ms) = 0.920608
+P(fall) = 0.866519
+Step:18100--->Actual:0.366042--->Estimate:0.352552
+-------------------------------------------------------------
+6773 18487
+P(fall/cs) = 0.850923
+P(cs) = 0.383886
+P(fall/ms) = 0.846978
+P(ms) = 0.923987
+P(fall) = 0.851151
+Step:21720--->Actual:0.366366--->Estimate:0.352872
+-------------------------------------------------------------
+7906 21523
+P(fall/cs) = 0.851577
+P(cs) = 0.382873
+P(fall/ms) = 0.845336
+P(ms) = 0.927743
+P(fall) = 0.849369
+Step:25340--->Actual:0.367328--->Estimate:0.354440
+-------------------------------------------------------------
+9104 24639
+P(fall/cs) = 0.855725
+P(cs) = 0.382700
+P(fall/ms) = 0.847096
+P(ms) = 0.930421
+P(fall) = 0.850794
+Step:28960--->Actual:0.369496--->Estimate:0.356579
+-------------------------------------------------------------
+10195 27506
+P(fall/cs) = 0.850116
+P(cs) = 0.383149
+P(fall/ms) = 0.840270
+P(ms) = 0.932934
+P(fall) = 0.844260
+Step:32580--->Actual:0.370646--->Estimate:0.358231
+-------------------------------------------------------------
+11315 30539
+P(fall/cs) = 0.851648
+P(cs) = 0.381354
+P(fall/ms) = 0.839730
+P(ms) = 0.935746
+P(fall) = 0.843619
+Step:36200--->Actual:0.370510--->Estimate:0.358586
+-------------------------------------------------------------
+
+================================== 10 RUNS COMPLEX QUERY - GIVEN FALL AND BITS, INFER MS, NCSU AND CS ==========================================
+--------------------------------------------
+2 68
+P(fall/North Carolina State University) = 0.958904
+P(www.bits-pilani.ac.in/North Carolina State University) = 0.041096
+P(North Carolina State University) = 0.049076
+P(fall/cs) = 0.915679
+P(www.bits-pilani.ac.in/cs) = 0.017787
+P(cs) = 0.419337
+P(fall/ms) = 0.904068
+P(www.bits-pilani.ac.in/ms) = 0.019429
+P(ms) = 0.909945
+P(fall) = 0.906630
+P(www.bits-pilani.ac.in) = 0.020166
+Step:3620--->Actual:0.029412--->Estimate:0.034544
+-------------------------------------------------------------
+11 162
+P(fall/North Carolina State University) = 0.966767
+P(www.bits-pilani.ac.in/North Carolina State University) = 0.054381
+P(North Carolina State University) = 0.044955
+P(fall/cs) = 0.882551
+P(www.bits-pilani.ac.in/cs) = 0.024637
+P(cs) = 0.409254
+P(fall/ms) = 0.879757
+P(www.bits-pilani.ac.in/ms) = 0.023199
+P(ms) = 0.910912
+P(fall) = 0.883011
+P(www.bits-pilani.ac.in) = 0.023619
+Step:7240--->Actual:0.067901--->Estimate:0.043103
+-------------------------------------------------------------
+13 234
+P(fall/North Carolina State University) = 0.969194
+P(www.bits-pilani.ac.in/North Carolina State University) = 0.054502
+P(North Carolina State University) = 0.043318
+P(fall/cs) = 0.876716
+P(www.bits-pilani.ac.in/cs) = 0.024657
+P(cs) = 0.395856
+P(fall/ms) = 0.876712
+P(www.bits-pilani.ac.in/ms) = 0.022764
+P(ms) = 0.914180
+P(fall) = 0.879650
+P(www.bits-pilani.ac.in) = 0.022928
+Step:10860--->Actual:0.055556--->Estimate:0.043543
+-------------------------------------------------------------
+16 307
+P(fall/North Carolina State University) = 0.971098
+P(www.bits-pilani.ac.in/North Carolina State University) = 0.055877
+P(North Carolina State University) = 0.041841
+P(fall/cs) = 0.863385
+P(www.bits-pilani.ac.in/cs) = 0.022650
+P(cs) = 0.387224
+P(fall/ms) = 0.860632
+P(www.bits-pilani.ac.in/ms) = 0.022386
+P(ms) = 0.916229
+P(fall) = 0.863950
+P(www.bits-pilani.ac.in) = 0.022859
+Step:14480--->Actual:0.052117--->Estimate:0.039400
+-------------------------------------------------------------
+18 377
+P(fall/North Carolina State University) = 0.972835
+P(www.bits-pilani.ac.in/North Carolina State University) = 0.054329
+P(North Carolina State University) = 0.041022
+P(fall/cs) = 0.867376
+P(www.bits-pilani.ac.in/cs) = 0.022440
+P(cs) = 0.384088
+P(fall/ms) = 0.863110
+P(www.bits-pilani.ac.in/ms) = 0.022085
+P(ms) = 0.920608
+P(fall) = 0.866519
+P(www.bits-pilani.ac.in) = 0.022376
+Step:18100--->Actual:0.047745--->Estimate:0.039023
+-------------------------------------------------------------
+19 444
+P(fall/North Carolina State University) = 0.972810
+P(www.bits-pilani.ac.in/North Carolina State University) = 0.052870
+P(North Carolina State University) = 0.039860
+P(fall/cs) = 0.850923
+P(www.bits-pilani.ac.in/cs) = 0.021708
+P(cs) = 0.383886
+P(fall/ms) = 0.846978
+P(www.bits-pilani.ac.in/ms) = 0.022024
+P(ms) = 0.923987
+P(fall) = 0.851151
+P(www.bits-pilani.ac.in) = 0.022192
+Step:21720--->Actual:0.042793--->Estimate:0.037183
+-------------------------------------------------------------
+20 531
+P(fall/North Carolina State University) = 0.972337
+P(www.bits-pilani.ac.in/North Carolina State University) = 0.051176
+P(North Carolina State University) = 0.040051
+P(fall/cs) = 0.851577
+P(www.bits-pilani.ac.in/cs) = 0.022985
+P(cs) = 0.382873
+P(fall/ms) = 0.845336
+P(www.bits-pilani.ac.in/ms) = 0.022630
+P(ms) = 0.927743
+P(fall) = 0.849369
+P(www.bits-pilani.ac.in) = 0.022770
+Step:25340--->Actual:0.037665--->Estimate:0.036640
+-------------------------------------------------------------
+20 595
+P(fall/North Carolina State University) = 0.972763
+P(www.bits-pilani.ac.in/North Carolina State University) = 0.050584
+P(North Carolina State University) = 0.039451
+P(fall/cs) = 0.855725
+P(www.bits-pilani.ac.in/cs) = 0.022196
+P(cs) = 0.382700
+P(fall/ms) = 0.847096
+P(www.bits-pilani.ac.in/ms) = 0.022082
+P(ms) = 0.930421
+P(fall) = 0.850794
+P(www.bits-pilani.ac.in) = 0.022307
+Step:28960--->Actual:0.033613--->Estimate:0.035927
+-------------------------------------------------------------
+21 699
+P(fall/North Carolina State University) = 0.971779
+P(www.bits-pilani.ac.in/North Carolina State University) = 0.055215
+P(North Carolina State University) = 0.039473
+P(fall/cs) = 0.850116
+P(www.bits-pilani.ac.in/cs) = 0.023312
+P(cs) = 0.383149
+P(fall/ms) = 0.840270
+P(www.bits-pilani.ac.in/ms) = 0.022833
+P(ms) = 0.932934
+P(fall) = 0.844260
+P(www.bits-pilani.ac.in) = 0.023112
+Step:32580--->Actual:0.030043--->Estimate:0.038744
+-------------------------------------------------------------
+22 754
+P(fall/North Carolina State University) = 0.972389
+P(www.bits-pilani.ac.in/North Carolina State University) = 0.056423
+P(North Carolina State University) = 0.038844
+P(fall/cs) = 0.851648
+P(www.bits-pilani.ac.in/cs) = 0.022745
+P(cs) = 0.381354
+P(fall/ms) = 0.839730
+P(www.bits-pilani.ac.in/ms) = 0.022170
+P(ms) = 0.935746
+P(fall) = 0.843619
+P(www.bits-pilani.ac.in) = 0.022459
+Step:36200--->Actual:0.029178--->Estimate:0.040325
+-------------------------------------------------------------
+
