@@ -8,9 +8,9 @@ import time
 def main(args):
     dm = DataModel(args.data_file)
     dm.read_data(normalize_data=False)
-    dm.set_data(
-            dm.filter_data(
-                filter_type=LIST, feature=U_MAJOR_CODE, shortlist=['ee','cs']))
+    #dm.set_data(
+    #        dm.filter_data(
+    #            filter_type=LIST, feature=U_MAJOR_CODE, shortlist=['ee','cs']))
     attributes_all = [U_GRADE_NORM, GRE_QUANT_NORM, GRE_VERBAL_NORM, GRE_AWA_NORM,\
             TOEFL_NORM, PROGRAM_CODE, U_MAJOR_CODE, TERM, YEAR]
     attr_list = [U_UNIVERSITY_CODE, PROGRAM_CODE, UNIVERSITY]

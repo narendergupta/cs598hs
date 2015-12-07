@@ -8,7 +8,6 @@ import math
 import matplotlib.pyplot as plt
 import networkx as nx
 import os
-import statistics as stats
 
 
 class Experimenter:
@@ -19,9 +18,11 @@ class Experimenter:
         self.total_count = None
         self.attr_list = attr_list
 
+
     def set_datamodel(self, dm):
         self.dm = dm
         return None
+
 
 #==========================================================================================================================#
     #========PREPROCESSING========#
@@ -36,27 +37,32 @@ class Experimenter:
                 if self.attr_list[i] == UNIVERSITY: not_uni = j
                 elif self.attr_list[j] == UNIVERSITY: not_uni = i
                 if not not_uni == None:
-                    summary_graph_dict[(self.attr_list[i], self.attr_list[j])] = self.get_grad_uni_summary_graph(self.attr_list[not_uni])
+                    summary_graph_dict[(self.attr_list[i], self.attr_list[j])] = \
+                            self.get_grad_uni_summary_graph(self.attr_list[not_uni])
                 else:
-                    summary_graph_dict[(self.attr_list[i], self.attr_list[j])] = self.get_summary_graph(self.attr_list[i], self.attr_list[j])
+                    summary_graph_dict[(self.attr_list[i], self.attr_list[j])] = \
+                            self.get_summary_graph(self.attr_list[i], self.attr_list[j])
         self.summary_graphs = summary_graph_dict
         return summary_graph_dict
     #========PREPROCESSING========#
 
+
     #========GET THE PROBABILITIES AND GENERIC ESTIMATION FUNCTION========#
-    def get_numerator(self, summary_graph_dict, given_dict, infer_dict):
+    def get_numerator(self, given_dict, infer_dict):
         numerator = 1
         for key1 in infer_dict:
             prod = 1
             for key2 in given_dict:
-                prod = prod * self.get_conditional_probability(summary_graph_dict, key2, key1, given_dict[key2], infer_dict[key1])
-            graph_for_given_key = self.get_particular_graph(summary_graph_dict, key1)
+                prod *= self.get_conditional_probability(\
+                        key2, key1, given_dict[key2], infer_dict[key1])
+            graph_for_given_key = self.get_particular_graph(key1)
             prod = prod * self.get_prior_probability(graph_for_given_key, infer_dict[key1])
             numerator = numerator * prod
-
         return numerator
 
-    def get_particular_graph(self, summary_graph_dict, key):
+
+    def get_particular_graph(self, key):
+        summary_graph_dict = self.get_all_summary_graphs()
         for attr_tup in summary_graph_dict:
             if key in attr_tup:
                 if key == UNIVERSITY:
@@ -65,24 +71,30 @@ class Experimenter:
                     return summary_graph_dict[attr_tup]
         return None
 
+
     def get_total_count(self, graph):
         return sum([graph[u][v]['weight'] for u,v in graph.edges()])
 
+
     def get_prior_probability(self, graph, att_val):
         total_att = 0
-        total_att = sum([graph[u][v]['weight'] for u,v in graph.edges() if u==att_val or v == att_val])
+        total_att = sum([graph[u][v]['weight'] for u,v in graph.edges() \
+                if u==att_val or v == att_val])
         print("P(%s) = %f" % (att_val, float(total_att)/self.get_total_count(graph)))
         return float(total_att)/self.get_total_count(graph)
 
-    def get_conditional_probability(self, summary_graph_dict, infer_type, given_type, infer_val, given_val):
+
+    def get_conditional_probability(self, infer_type, given_type, infer_val, given_val):
         """
         get probability of infer|given
         """
+        summary_graph_dict = self.get_all_summary_graphs()
         infer_first = False
         if (infer_type, given_type) in summary_graph_dict:
             graph = summary_graph_dict[(infer_type, given_type)]
             infer_first = True
-        elif (given_type, infer_type) in summary_graph_dict: graph = summary_graph_dict[(given_type, infer_type)]
+        elif (given_type, infer_type) in summary_graph_dict:
+            graph = summary_graph_dict[(given_type, infer_type)]
         else:
             print("Summary graph not found! Fatal!")
             quit()
@@ -98,17 +110,21 @@ class Experimenter:
         print("P(%s/%s) = %f" %(infer_val, given_val, float(infer)/total))
         return float(infer)/total
 
-    def get_denominator(self, summary_graph_dict, given_dict):
+
+    def get_denominator(self, given_dict):
+        summary_graph_dict = self.get_all_summary_graphs()
         prod = 1
         for key in given_dict:
-            graph_for_given_key = self.get_particular_graph(summary_graph_dict, key)
+            graph_for_given_key = self.get_particular_graph(key)
             prior_for_given_key = self.get_prior_probability(graph_for_given_key, given_dict[key])
             prod = prod * prior_for_given_key
         return prod
 
+
     def generic_get_estimated_result(self, given_dict, infer_dict):
-        summary_graph_dict = self.get_all_summary_graphs()
-        return self.get_numerator(summary_graph_dict, given_dict, infer_dict) / (self.get_denominator(summary_graph_dict, given_dict)**len(infer_dict))
+        numer = self.get_numerator(given_dict, infer_dict)
+        denom = self.get_denominator(given_dict)**len(infer_dict)
+        return numer/denom
 
     #========GET THE PROBABILITIES AND GENERIC ESTIMATION FUNCTION========#
 
@@ -130,9 +146,11 @@ class Experimenter:
                 passed_infer = True
                 for key in infer_dict:
                     if key == UNIVERSITY:
-                        passed_infer = passed_infer and (infer_dict[key] in row and row[infer_dict[key]] == ADMIT)
+                        passed_infer = passed_infer and \
+                                (infer_dict[key] in row and row[infer_dict[key]] == ADMIT)
                     else:
-                        passed_infer = passed_infer and (key in row and row[key] == infer_dict[key])
+                        passed_infer = passed_infer and \
+                                (key in row and row[key] == infer_dict[key])
                     if not passed_infer: break
                 if passed_infer: inferred_count += 1
 
