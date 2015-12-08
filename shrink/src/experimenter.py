@@ -265,15 +265,14 @@ class Experimenter:
         return None
     
     def plot_datasize_vs_efficiency(self, given_dict, infer_dict, max_datasize=None, output_file=""):
-        (est_times, acc_times) = self.perform_datasize_vs_efficiency(\
+        (sizes, est_times, acc_times) = self.perform_datasize_vs_efficiency(\
                 given_dict, infer_dict, max_datasize)
         max_time = max(max(est_times), max(acc_times))
         plt.figure()
-        plt.xlabel('Data Size (Max no. of rows = ' + str(max_datasize) + ')')
+        plt.xlabel('Data Size')
         plt.ylabel('Time (Seconds)')
-        x = [i for i in range(len(est_times))]
-        plt.plot(x, est_times, color='green', label='EQUALGAS')
-        plt.plot(x, acc_times, color='red', label='Actual Result')
+        plt.plot(sizes, est_times, color='green', label='EQUALGAS')
+        plt.plot(sizes, acc_times, color='red', label='Actual Result')
         plt.suptitle('Data Size vs Time')
         plt.legend(loc=4, ncol=1)
         plt.savefig(output_file)
@@ -282,7 +281,7 @@ class Experimenter:
 
 
     def perform_datasize_vs_efficiency(self, given_dict, infer_dict, max_datasize=None, steps=10):
-        est_times, acc_times = [], []
+        sizes, est_times, acc_times = [], [], []
         if max_datasize is None:
             max_datasize = len(self.dm.data)
         data_step = max_datasize / steps
@@ -296,9 +295,10 @@ class Experimenter:
             cur_dm.set_data(cur_data)
             cur_exp = Experimenter(cur_dm, self.attr_list)
             (cur_est, cur_acc) = cur_exp.time_n_queries(given_dict, infer_dict)
+            sizes.append(cur_datasize)
             est_times.append(float(sum(cur_est))/len(cur_est))
             acc_times.append(float(sum(cur_acc))/len(cur_acc))
-        return (est_times, acc_times)
+        return (sizes, est_times, acc_times)
 
 
     def time_n_queries(self, given_dict, infer_dict, n=5):
