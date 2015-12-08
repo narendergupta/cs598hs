@@ -22,8 +22,8 @@ def main(args):
     #ACTUAL RESULT
     given_dict = {U_UNIVERSITY_CODE: 'www.bits-pilani.ac.in'}
     infer_dict = {PROGRAM_CODE: 'ms', UNIVERSITY: 'North Carolina State University'}
-    exp.plot_datasize_vs_accuracy(given_dict, infer_dict, max_datasize=50000, \
-            output_file='../data_size_vs_efficiency.png')
+    exp.plot_datasize_vs_accuracy(given_dict, infer_dict, max_datasize=200000, \
+            output_file='../results/figures/data_size_vs_time.png')
     return None
 
 

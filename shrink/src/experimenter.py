@@ -236,8 +236,8 @@ class Experimenter:
         plt.xlabel('Data Size (Max no. of rows = ' + str(max_datasize) + ')')
         plt.ylabel('Time (Seconds)')
         x = [i for i in range(len(est_times))]
-        plt.plot(x, est_times, color='green', label='Estimated Time')
-        plt.plot(x, acc_times, color='red', label='Accurate Time')
+        plt.plot(x, est_times, color='green', label='EQUALGAS')
+        plt.plot(x, acc_times, color='red', label='Actual Result')
         plt.suptitle('Data Size vs Time')
         plt.legend(loc=4, ncol=1)
         plt.savefig(output_file)
