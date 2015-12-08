@@ -8,6 +8,7 @@ import math
 import matplotlib.pyplot as plt
 import networkx as nx
 import os
+import time
 
 
 class Experimenter:
@@ -36,7 +37,7 @@ class Experimenter:
                 not_uni = None
                 if self.attr_list[i] == UNIVERSITY: not_uni = j
                 elif self.attr_list[j] == UNIVERSITY: not_uni = i
-                if not not_uni == None:
+                if not_uni is not None:
                     summary_graph_dict[(self.attr_list[i], self.attr_list[j])] = \
                             self.get_grad_uni_summary_graph(self.attr_list[not_uni])
                 else:
@@ -87,7 +88,7 @@ class Experimenter:
             if att_val in tup:
                 total_att += tup[2]['weight']
 
-        print("P(%s) = %f" % (att_val, float(total_att)/self.get_total_count(graph)))
+        #print("P(%s) = %f" % (att_val, float(total_att)/self.get_total_count(graph)))
         return float(total_att)/self.get_total_count(graph)
 
 
@@ -97,14 +98,20 @@ class Experimenter:
         """
         summary_graph_dict = self.get_all_summary_graphs()
     
-        if (infer_type, given_type) in summary_graph_dict: graph = summary_graph_dict[(infer_type, given_type)]
-        elif (given_type, infer_type) in summary_graph_dict: graph = summary_graph_dict[(given_type, infer_type)]
-        else: return 0
+        if (infer_type, given_type) in summary_graph_dict:
+            graph = summary_graph_dict[(infer_type, given_type)]
+        elif (given_type, infer_type) in summary_graph_dict:
+            graph = summary_graph_dict[(given_type, infer_type)]
+        else:
+            return 0
         
         infer = 0.0
         total = 0.0
-        infer = graph.get_edge_data(given_val, infer_val)['weight']
-        if not infer:
+        infer = None
+        edge = graph.get_edge_data(given_val, infer_val)
+        if edge is not None:
+            infer = edge['weight']
+        if infer is None:
             print "INFER"
             return 0.0
         for tup in graph.edges(data=True):
@@ -113,7 +120,7 @@ class Experimenter:
         if not total:
             print "P(%s/%s) TOTAL" %(infer_val, given_val)
             return 0.0
-        print("P(%s/%s) = %f" %(infer_val, given_val, float(infer)/total))
+        #print("P(%s/%s) = %f" %(infer_val, given_val, float(infer)/total))
         return float(infer)/total
 
     def get_denominator(self, given_dict):
@@ -165,7 +172,7 @@ class Experimenter:
                     if not passed_infer: break
                 if passed_infer: inferred_count += 1
 
-        print inferred_count, given_count
+        #print inferred_count, given_count
         if(given_count == 0):
             return 0.0
         return float(inferred_count) / given_count
@@ -215,6 +222,61 @@ class Experimenter:
 #        plt.savefig('../results/figures/summary_graph_UNIVERSITY_' + attr + '.png')
 #        plt.show()
         return G
+
+
+#============================================================
+# Experiments ===============================================
+#============================================================
+
+    def plot_datasize_vs_accuracy(self, given_dict, infer_dict, max_datasize, output_file):
+        (est_times, acc_times) = self.perform_datasize_vs_efficiency(\
+                given_dict, infer_dict, max_datasize)
+        plt.figure()
+        x = [i for i in range(len(est_times))]
+        plt.plot(x, est_times, linestyle='solid')
+        plt.plot(x, acc_times, linestyle='dotted')
+        plt.title('Data Size vs Efficiency')
+        plt.savefig(output_file)
+        plt.show()
+        return None
+
+
+    def perform_datasize_vs_efficiency(self, given_dict, infer_dict, max_datasize=None, steps=10):
+        est_times, acc_times = [], []
+        if max_datasize is None:
+            max_datasize = len(self.dm.data)
+        data_step = max_datasize / steps
+        for i in range(steps):
+            cur_datasize = (i+1) * data_step
+            data = self.dm.data
+            while len(data) < cur_datasize:
+                data.extend(self.dm.data)
+            cur_data = data[:cur_datasize]
+            cur_dm = DataModel("")
+            cur_dm.set_data(cur_data)
+            cur_exp = Experimenter(cur_dm, self.attr_list)
+            (cur_est, cur_acc) = cur_exp.time_n_queries(given_dict, infer_dict)
+            est_times.append(float(sum(cur_est))/len(cur_est))
+            acc_times.append(float(sum(cur_acc))/len(cur_acc))
+        return (est_times, acc_times)
+
+
+    def time_n_queries(self, given_dict, infer_dict, n=5):
+        est_times = []
+        acc_times = []
+        for i in range(n+1):
+            pre_est_time = time.time()
+            self.generic_get_estimated_result(given_dict, infer_dict)
+            est_time = time.time()
+            pre_acc_time = time.time()
+            self.get_actual_result(given_dict, infer_dict)
+            acc_time = time.time()
+            # Ignore first run because extra time might be taken to construct summary graphs
+            if i > 0:
+                est_times.append(est_time - pre_est_time)
+                acc_times.append(acc_time - pre_acc_time)
+        return (est_times, acc_times)
+
 
 #============================================================
 #============================================================

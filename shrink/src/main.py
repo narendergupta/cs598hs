@@ -18,24 +18,15 @@ def main(args):
     exp = Experimenter(dm, attr_list)
     print "Set up data complete"
 
-#    undergrad_to_grad_uni = exp.get_grad_uni_summary_graph(U_UNIVERSITY_CODE)
-#    pgm_code_to_ugrad_uni = exp.get_summary_graph(U_UNIVERSITY_CODE, PROGRAM_CODE)
-#    print(len(undergrad_to_grad_uni.edges()), len(pgm_code_to_ugrad_uni.edges()))
-
-#    ug_to_g, pgm_to_ug, pgm_to_g = exp.dummy_graphs()
-#    print(len(ug_to_g.edges()), len(pgm_to_ug.edges()))
-
     print "--------------------------------------------"
     #ACTUAL RESULT
     given_dict = {U_UNIVERSITY_CODE: 'www.bits-pilani.ac.in'}
-    inf_dict = {PROGRAM_CODE: 'ms', UNIVERSITY: 'North Carolina State University'}
-    acc = exp.get_actual_result(given_dict, inf_dict)
-    print "Got actual result"
-    est = exp.generic_get_estimated_result(given_dict, inf_dict)
-    print "Got estimated result"
-    print(est, acc)
-#   print(est)
+    infer_dict = {PROGRAM_CODE: 'ms', UNIVERSITY: 'North Carolina State University'}
+    exp.plot_datasize_vs_accuracy(given_dict, infer_dict, max_datasize=50000, \
+            output_file='../data_size_vs_efficiency.png')
     return None
+
+
 #========TEST CONDITIONAL PROBABILITY========#
 #    summary_graph_dict = {(U_UNIVERSITY_CODE, UNIVERSITY):ug_to_g, (PROGRAM_CODE, U_UNIVERSITY_CODE):pgm_to_ug, (PROGRAM_CODE, UNIVERSITY):pgm_to_g}
 #    given_dict = {PROGRAM_CODE: 'ms', U_UNIVERSITY_CODE: 'www.13.com'}
