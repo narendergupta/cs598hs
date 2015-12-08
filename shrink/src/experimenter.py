@@ -271,10 +271,10 @@ class Experimenter:
         plt.figure()
         plt.xlabel('Data Size')
         plt.ylabel('Time (Seconds)')
-        plt.plot(sizes, est_times, color='green', label='EQUALGAS')
+        plt.plot(sizes, est_times, color='green', linewidth=4.0, marker='o', label='EQUALGAS')
         plt.plot(sizes, acc_times, color='red', label='Actual Result')
         plt.suptitle('Data Size vs Time')
-        plt.legend(loc=4, ncol=1)
+        plt.legend(loc=2, ncol=1)
         plt.savefig(output_file)
         plt.show()
         return None
