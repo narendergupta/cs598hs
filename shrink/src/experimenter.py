@@ -228,6 +228,42 @@ class Experimenter:
 # Experiments ===============================================
 #============================================================
 
+    def perform_datasize_vs_accuracy(self, given_dict, infer_dict, max_datasize=None, steps=10):
+        #Get experiment data in a dict
+        size = []
+        accuracy = []
+        if max_datasize is None:
+            max_datasize = len(self.dm.data)
+        data_step = max_datasize / steps
+        
+        for i in range(steps):
+            cur_datasize = (i+1) * data_step
+            data = self.dm.data
+            while len(data) < cur_datasize:
+                data.extend(self.dm.data)
+            cur_data = data[:cur_datasize]
+            cur_dm = DataModel("")
+            cur_dm.set_data(cur_data)
+            cur_exp = Experimenter(cur_dm, self.attr_list)
+            actual = cur_exp.get_actual_result(given_dict, infer_dict)
+            estimation = cur_exp.generic_get_estimated_result(given_dict, infer_dict)
+            size.append(cur_datasize)
+            accuracy.append(abs(estimation - actual))
+        return (size, accuracy)
+
+
+    def plot_datasize_vs_accuracy(self, given_dict, infer_dict, max_datasize, output_file):
+        (steps, diffs) = self.perform_datasize_vs_accuracy(\
+                given_dict, infer_dict, max_datasize)
+        plt.figure()
+        plt.xlabel('Data Size')
+        plt.ylabel('Error = abs(Actual - Estimate)')
+        plt.plot(steps, diffs, color='blue')
+        plt.suptitle('Data Size vs Error')
+        plt.savefig(output_file)
+        plt.show()
+        return None
+    
     def plot_datasize_vs_efficiency(self, given_dict, infer_dict, max_datasize, output_file):
         (est_times, acc_times) = self.perform_datasize_vs_efficiency(\
                 given_dict, infer_dict, max_datasize)

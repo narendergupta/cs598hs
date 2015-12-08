@@ -7,8 +7,8 @@ import time
 
 def main(args):
     dm = DataModel(args.data_file)
-#   dm.read_data(to_read_count = 100, normalize_data=False)
-    dm.read_data(normalize_data=False)
+    dm.read_data(to_read_count = 2000, normalize_data=False)
+    #dm.read_data(normalize_data=False)
     #dm.set_data(
     #        dm.filter_data(
     #            filter_type=LIST, feature=U_MAJOR_CODE, shortlist=['ee','cs']))
@@ -22,8 +22,9 @@ def main(args):
     #ACTUAL RESULT
     given_dict = {U_UNIVERSITY_CODE: 'www.bits-pilani.ac.in'}
     infer_dict = {PROGRAM_CODE: 'ms', UNIVERSITY: 'North Carolina State University'}
-    exp.plot_datasize_vs_efficiency(given_dict, infer_dict, max_datasize=200000, \
-            output_file='../results/figures/data_size_vs_time.png')
+    #exp.plot_datasize_vs_efficiency(given_dict, infer_dict, max_datasize=2000, \
+    #        output_file='../results/figures/data_size_vs_time.png')
+    exp.plot_datasize_vs_accuracy(given_dict, infer_dict, max_datasize=2000, output_file = '../results/figures/data_size_vs_accuracy.png')
     return None
 
 
