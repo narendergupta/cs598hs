@@ -8,7 +8,8 @@ import time
 def test_data_size_vs_diff(dm, given_dict, infer_dict):
     #Read all data from data model
     dm.read_data(normalize_data=False)   
-    attr_list = [U_UNIVERSITY_CODE, PROGRAM_CODE, UNIVERSITY, MAJOR_CODE, TERM]
+    #attr_list = [U_UNIVERSITY_CODE, PROGRAM_CODE, UNIVERSITY, MAJOR_CODE, TERM]
+    attr_list = [U_UNIVERSITY_CODE, PROGRAM_CODE, UNIVERSITY]
     #attr_list = [MAJOR_CODE, PROGRAM_CODE, TERM]
     
     #Size of data
@@ -59,8 +60,8 @@ def main(args):
     """
     print "--------------------------------------------"
     #ACTUAL RESULT
-    given_dict = {TERM: 'fall', U_UNIVERSITY_CODE: 'www.bits-pilani.ac.in'}
-    inf_dict = {MAJOR_CODE: 'cs', PROGRAM_CODE: 'ms', UNIVERSITY: 'North Carolina State University'}
+    given_dict = {U_UNIVERSITY_CODE: 'www.bits-pilani.ac.in'}
+    inf_dict = {PROGRAM_CODE: 'ms', UNIVERSITY: 'North Carolina State University'}
     #given_dict = {TERM: 'fall'}
     #inf_dict = {PROGRAM_CODE: 'ms', MAJOR_CODE: 'cs'}
     """
