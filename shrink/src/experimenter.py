@@ -231,11 +231,15 @@ class Experimenter:
     def plot_datasize_vs_accuracy(self, given_dict, infer_dict, max_datasize, output_file):
         (est_times, acc_times) = self.perform_datasize_vs_efficiency(\
                 given_dict, infer_dict, max_datasize)
+        max_time = max(max(est_times), max(acc_times))
         plt.figure()
+        plt.xlabel('Data Size (Max no. of rows = ' + str(max_datasize) + ')')
+        plt.ylabel('Time (Seconds)')
         x = [i for i in range(len(est_times))]
-        plt.plot(x, est_times, linestyle='solid')
-        plt.plot(x, acc_times, linestyle='dotted')
-        plt.title('Data Size vs Efficiency')
+        plt.plot(x, est_times, color='green', label='Estimated Time')
+        plt.plot(x, acc_times, color='red', label='Accurate Time')
+        plt.suptitle('Data Size vs Time')
+        plt.legend(loc=4, ncol=1)
         plt.savefig(output_file)
         plt.show()
         return None
