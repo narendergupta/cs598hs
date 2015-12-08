@@ -252,7 +252,7 @@ class Experimenter:
         return (size, accuracy)
 
 
-    def plot_datasize_vs_accuracy(self, given_dict, infer_dict, max_datasize, output_file):
+    def plot_datasize_vs_accuracy(self, given_dict, infer_dict, max_datasize=None, output_file=""):
         (steps, diffs) = self.perform_datasize_vs_accuracy(\
                 given_dict, infer_dict, max_datasize)
         plt.figure()
@@ -264,7 +264,7 @@ class Experimenter:
         plt.show()
         return None
     
-    def plot_datasize_vs_efficiency(self, given_dict, infer_dict, max_datasize, output_file):
+    def plot_datasize_vs_efficiency(self, given_dict, infer_dict, max_datasize=None, output_file=""):
         (est_times, acc_times) = self.perform_datasize_vs_efficiency(\
                 given_dict, infer_dict, max_datasize)
         max_time = max(max(est_times), max(acc_times))
